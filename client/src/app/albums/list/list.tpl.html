@@ -1,0 +1,13 @@
+<div ng-controller="ListController as controller">
+  <h1>Albums</h1>
+
+  <ul>
+    <li ng-repeat="album in controller.albums">
+      <h2>{{ album.title }}</h2>
+      <p><em>{{ album.date }}</em></p>
+      <p><a ui-sref="albums_view({id: album.id})">View album</a></p>
+    </li>
+  </ul>
+
+</div>
+

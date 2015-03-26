@@ -1,0 +1,14 @@
+# Temporary files
+*.sw*
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# App-specific directories
+build/
+bin/
+client/node_modules/
+client/vendor/
