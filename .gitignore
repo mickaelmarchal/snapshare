@@ -10,5 +10,5 @@ Desktop.ini
 # App-specific directories
 build/
 bin/
-client/node_modules/
+node_modules/
 client/vendor/
