@@ -31,7 +31,7 @@ module.exports = function ( grunt ) {
      * We read in our `package.json` file so we can access the package name and
      * version. It's already there, so we don't repeat ourselves here.
      */
-    pkg: grunt.file.readJSON("package.json"),
+    pkg: grunt.file.readJSON('package.json'),
 
     /**
      * The banner is the comment that is placed at the top of our compiled 
@@ -65,14 +65,14 @@ module.exports = function ( grunt ) {
     bump: {
       options: {
         files: [
-          "package.json", 
-          "client/bower.json"
+          'package.json', 
+          'client/bower.json'
         ],
         commit: false,
         commitMessage: 'chore(release): v%VERSION%',
         commitFiles: [
-          "package.json", 
-          "client/bower.json"
+          'package.json', 
+          'client/bower.json'
         ],
         createTag: false,
         tagName: 'v%VERSION%',
@@ -86,8 +86,8 @@ module.exports = function ( grunt ) {
      * The directories to delete when `grunt clean` is executed.
      */
     clean: [ 
-      '<%= build_dir %>', 
-      '<%= compile_dir %>'
+      '<%= build_dir %>/client', 
+      '<%= compile_dir %>/client'
     ],
 
     /**
@@ -100,7 +100,7 @@ module.exports = function ( grunt ) {
         files: [
           { 
             src: [ '**' ],
-            dest: '<%= build_dir %>/assets/',
+            dest: '<%= build_dir %>/client/assets/',
             cwd: 'client/src/assets',
             expand: true
           }
@@ -109,8 +109,8 @@ module.exports = function ( grunt ) {
       build_vendor_assets: {
         files: [
           { 
-            src: [ '<%= vendor_files.assets %>' ],
-            dest: '<%= build_dir %>/assets/',
+            src: [ '<%= client.vendor_files.assets %>' ],
+            dest: '<%= build_dir %>/client/assets/',
             cwd: 'client',
             expand: true,
             flatten: true
@@ -120,8 +120,8 @@ module.exports = function ( grunt ) {
       build_appjs: {
         files: [
           {
-            src: [ '<%= app_files.js %>' ],
-            dest: '<%= build_dir %>/',
+            src: [ '<%= client.app_files.js %>' ],
+            dest: '<%= build_dir %>/client',
             cwd: 'client',
             expand: true
           }
@@ -130,9 +130,9 @@ module.exports = function ( grunt ) {
       build_vendorjs: {
         files: [
           {
-            src: [ '<%= vendor_files.js %>' ],
-            dest: '<%= build_dir %>/../',
-            cwd: '.',
+            src: [ '<%= client.vendor_files.js %>' ],
+            dest: '<%= build_dir %>/client',
+            cwd: 'client',
             expand: true
           }
         ]
@@ -140,8 +140,8 @@ module.exports = function ( grunt ) {
       build_vendorcss: {
         files: [
           {
-            src: [ '<%= vendor_files.css %>' ],
-            dest: '<%= build_dir %>/',
+            src: [ '<%= client.vendor_files.css %>' ],
+            dest: '<%= build_dir %>/client',
             cwd: 'client',
             expand: true
           }
@@ -151,13 +151,13 @@ module.exports = function ( grunt ) {
         files: [
           {
             src: [ '**' ],
-            dest: '<%= compile_dir %>/assets',
-            cwd: '<%= build_dir %>/assets',
+            dest: '<%= compile_dir %>/client/assets',
+            cwd: '<%= build_dir %>/client/assets',
             expand: true
           },
           {
-            src: [ '<%= vendor_files.css %>' ],
-            dest: '<%= compile_dir %>/',
+            src: [ '<%= client.vendor_files.css %>' ],
+            dest: '<%= compile_dir %>/client',
             cwd: 'client',
             expand: true
           }
@@ -175,10 +175,10 @@ module.exports = function ( grunt ) {
        */
       build_css: {
         src: [
-          '<%= vendor_files.css %>',
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+          '<%= client.vendor_files.css %>',
+          '<%= build_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.css'
         ],
-        dest: '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+        dest: '<%= build_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.css'
       },
       /**
        * The `compile_js` target is the concatenation of our application source
@@ -189,14 +189,14 @@ module.exports = function ( grunt ) {
           banner: '<%= meta.banner %>'
         },
         src: [ 
-          '<%= vendor_files.js %>', 
+          '<%= client.vendor_files.js %>', 
           'module.prefix', 
           '<%= build_dir %>/client/src/**/*.js', 
           '<%= html2js.app.dest %>', 
           '<%= html2js.common.dest %>', 
           'module.suffix' 
         ],
-        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.js'
+        dest: '<%= compile_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
 
@@ -208,9 +208,9 @@ module.exports = function ( grunt ) {
       compile: {
         files: [
           {
-            src: [ '<%= app_files.js %>' ],
-            cwd: '<%= build_dir %>',
-            dest: '<%= build_dir %>',
+            src: [ '<%= client.app_files.js %>' ],
+            cwd: '<%= build_dir %>/client',
+            dest: '<%= build_dir %>/client',
             expand: true
           }
         ]
@@ -239,12 +239,12 @@ module.exports = function ( grunt ) {
     less: {
       build: {
         files: {
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css': 'client/<%= app_files.less %>'
+          '<%= build_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.css': 'client/<%= client.app_files.less %>'
         }
       },
       compile: {
         files: {
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css': 'client/<%= app_files.less %>'
+          '<%= build_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.css': 'client/<%= client.app_files.less %>'
         },
         options: {
           cleancss: true,
@@ -262,12 +262,24 @@ module.exports = function ( grunt ) {
      * nonetheless inside `src/`.
      */
     jshint: {
-      src: [ 
-        '<%= app_files.js %>'
-      ],
-      test: [
-        '<%= app_files.jsunit %>'
-      ],
+      src: {
+        files: [
+          {
+            src: '<%= client.app_files.js %>',
+            cwd: 'client',
+            expand: true
+          }
+        ]
+      },
+      test: {
+        files: [
+          {
+            src: '<%= client.app_files.jsunit %>',
+            cwd: 'client',
+            expand: true
+          }
+        ]
+      },
       gruntfile: [
         'Gruntfile.js'
       ],
@@ -297,8 +309,8 @@ module.exports = function ( grunt ) {
         options: {
           base: 'client/src/app'
         },
-        src: [ 'client/<%= app_files.atpl %>' ],
-        dest: '<%= build_dir %>/templates-app.js'
+        src: [ 'client/<%= client.app_files.atpl %>' ],
+        dest: '<%= build_dir %>/client/templates-app.js'
       },
 
       /**
@@ -306,10 +318,10 @@ module.exports = function ( grunt ) {
        */
       common: {
         options: {
-          base: 'src/common'
+          base: 'client/src/common'
         },
-        src: [ 'client/<%= app_files.ctpl %>' ],
-        dest: '<%= build_dir %>/templates-common.js'
+        src: [ 'client/<%= client.app_files.ctpl %>' ],
+        dest: '<%= build_dir %>/client/templates-common.js'
       }
     },
 
@@ -318,7 +330,7 @@ module.exports = function ( grunt ) {
      */
     karma: {
       options: {
-        configFile: '<%= build_dir %>/karma-unit.js'
+        configFile: '<%= build_dir %>/client/karma-unit.js'
       },
       unit: {
         port: 9019,
@@ -342,14 +354,23 @@ module.exports = function ( grunt ) {
        * `src` property contains the list of included files.
        */
       build: {
-        dir: '<%= build_dir %>',
-        src: [
-          '<%= vendor_files.js %>',   /** ces fichiers sont donnés à partir du dossier racine, du coup on est obligé de mettre "client/" devant sinon grunt les trouve pas. mais le probleme c'est que ensuite */
-          '<%= build_dir %>/src/**/*.js',
-          '<%= html2js.common.dest %>',
-          '<%= html2js.app.dest %>',
-          '<%= vendor_files.css %>',
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+        dir: '<%= build_dir %>/client',
+        files: [
+          {
+            src: [ '<%= client.vendor_files.js %>' ],
+            cwd: 'client',
+            expand: true
+          },
+          {
+            src: [
+              '<%= build_dir %>/client/src/**/*.js',
+              '<%= html2js.common.dest %>',
+              '<%= html2js.app.dest %>',
+              '<%= client.vendor_files.css %>',
+              '<%= build_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+            ],
+            expand: true
+          }
         ]
       },
 
@@ -362,8 +383,8 @@ module.exports = function ( grunt ) {
         dir: '<%= compile_dir %>',
         src: [
           '<%= concat.compile_js.dest %>',
-          '<%= vendor_files.css %>',
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+          '<%= client.vendor_files.css %>',
+          '<%= build_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.css'
         ]
       }
     },
@@ -374,12 +395,16 @@ module.exports = function ( grunt ) {
      */
     karmaconfig: {
       unit: {
-        dir: '<%= build_dir %>',
-        src: [ 
-          '<%= vendor_files.js %>',
-          '<%= html2js.app.dest %>',
-          '<%= html2js.common.dest %>',
-          '<%= test_files.js %>'
+        dir: '<%= build_dir %>/client',
+        files: [
+          {
+            src: [ '<%= client.vendor_files.js %>', '<%= client.test_files.js %>' ],
+            cwd: 'client',
+            expand: true
+          },
+          {
+            src: [ '<%= html2js.app.dest %>', '<%= html2js.common.dest %>' ]
+          }
         ]
       }
     },
@@ -423,7 +448,7 @@ module.exports = function ( grunt ) {
        */
       jssrc: {
         files: [ 
-          '<%= app_files.js %>'
+          '<%= client.app_files.js %>'
         ],
         tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs' ]
       },
@@ -443,7 +468,7 @@ module.exports = function ( grunt ) {
        * When index.html changes, we need to compile it.
        */
       html: {
-        files: [ 'client/<%= app_files.html %>' ],
+        files: [ 'client/<%= client.app_files.html %>' ],
         tasks: [ 'index:build' ]
       },
 
@@ -452,8 +477,8 @@ module.exports = function ( grunt ) {
        */
       tpls: {
         files: [ 
-          '<%= app_files.atpl %>', 
-          '<%= app_files.ctpl %>'
+          '<%= client.app_files.atpl %>', 
+          '<%= client.app_files.ctpl %>'
         ],
         tasks: [ 'html2js' ]
       },
@@ -472,7 +497,7 @@ module.exports = function ( grunt ) {
        */
       jsunit: {
         files: [
-          '<%= app_files.jsunit %>'
+          '<%= client.app_files.jsunit %>'
         ],
         tasks: [ 'jshint:test', 'karma:unit:run' ],
         options: {
@@ -542,13 +567,9 @@ module.exports = function ( grunt ) {
    * compilation.
    */
   grunt.registerMultiTask( 'index', 'Process index.html template', function () {
-      
-      console.log(this.data, 'DATA');
-    var dirRE = new RegExp( '^('+grunt.config('build_dir')+'|'+grunt.config('compile_dir')+'|client)\/', 'g' );
-    
-    console.log(dirRE, 'dirRE');
-    console.log(this.filesSrc, 'filesSrc');
-    
+
+    var dirRE = new RegExp( '^('+grunt.config('build_dir')+'\/client|'+grunt.config('compile_dir')+'\/client|client)\/', 'g' );
+
     var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
@@ -575,13 +596,10 @@ module.exports = function ( grunt ) {
    * compiled as grunt templates for use by Karma. Yay!
    */
   grunt.registerMultiTask( 'karmaconfig', 'Process karma config templates', function () {
-      
-    var dirRE = new RegExp( '^('+grunt.config('build_dir')+'|'+grunt.config('compile_dir')+'|client)\/', 'g' );
-    var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
-      return file.replace( dirRE, '' );
-    });
 
-    grunt.file.copy( 'client/karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/karma-unit.js', { 
+    var jsFiles = filterForJS( this.filesSrc );
+
+    grunt.file.copy( 'client/karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/client/karma-unit.js', { 
       process: function ( contents, path ) {
         return grunt.template.process( contents, {
           data: {
