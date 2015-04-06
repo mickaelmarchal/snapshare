@@ -188,14 +188,7 @@ module.exports = function ( grunt ) {
         options: {
           banner: '<%= meta.banner %>'
         },
-        src: [ 
-          '<%= client.vendor_files.js %>', 
-          'module.prefix', 
-          '<%= build_dir %>/client/src/**/*.js', 
-          '<%= html2js.app.dest %>', 
-          '<%= html2js.common.dest %>', 
-          'module.suffix' 
-        ],
+        src: '', //filled-in by custom task compilejs
         dest: '<%= compile_dir %>/client/assets/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
@@ -380,7 +373,7 @@ module.exports = function ( grunt ) {
        * file. Now we're back!
        */
       compile: {
-        dir: '<%= compile_dir %>',
+        dir: '<%= compile_dir %>/client',
         src: [
           '<%= concat.compile_js.dest %>',
           '<%= client.vendor_files.css %>',
@@ -448,7 +441,7 @@ module.exports = function ( grunt ) {
        */
       jssrc: {
         files: [ 
-          '<%= client.app_files.js %>'
+          'client/<%= client.app_files.js %>'
         ],
         tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs' ]
       },
@@ -459,7 +452,7 @@ module.exports = function ( grunt ) {
        */
       assets: {
         files: [ 
-          'src/assets/**/*'
+          'client/src/assets/**/*'
         ],
         tasks: [ 'copy:build_app_assets', 'copy:build_vendor_assets' ]
       },
@@ -539,7 +532,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'less:compile', 'copy:compile_assets', 'ngAnnotate', 'concat:compile_js', 'uglify', 'index:compile'
+    'less:compile', 'copy:compile_assets', 'ngAnnotate', 'compilejs', 'uglify', 'index:compile'
   ]);
 
   /**
@@ -608,6 +601,28 @@ module.exports = function ( grunt ) {
         });
       }
     });
+  });
+
+  /**
+   * Configure JS files compilation task
+   * Needed because of various Grunt limitations
+   */
+  grunt.registerTask('compilejs', 'Compile js files together', function() {
+
+    var files = [];
+    for(var i = 0; i < grunt.config('client.vendor_files.js').length; i++) {
+        files.push('client/'+grunt.config('client.vendor_files.js')[i]);
+    }
+    files.push('client/module.prefix');
+    files.push(grunt.config('build_dir')+'/client/src/**/*.js'); 
+    files.push('<%= html2js.app.dest %>');
+    files.push('<%= html2js.common.dest %>'); 
+    files.push('client/module.suffix');
+
+    //console.log(files, 'FILES');
+    grunt.config('concat.compile_js.src', files);
+
+    grunt.task.run('concat:compile_js');
   });
 
 };
