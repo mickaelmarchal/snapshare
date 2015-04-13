@@ -76,6 +76,15 @@ module.exports = {
       assets: [
       ]
     }
+  },
   
+  server: {
+    src_files: [
+      'server.js',
+      'lib/**/*.js'
+    ],
+    test_files: [
+      'test/**/*.js'
+    ]
   }
 };

@@ -11,6 +11,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-karma');
@@ -255,7 +256,7 @@ module.exports = function ( grunt ) {
      * nonetheless inside `src/`.
      */
     jshint: {
-      src: {
+      clientSrc: {
         files: [
           {
             src: '<%= client.app_files.js %>',
@@ -264,11 +265,29 @@ module.exports = function ( grunt ) {
           }
         ]
       },
-      test: {
+      clientTest: {
         files: [
           {
             src: '<%= client.app_files.jsunit %>',
             cwd: 'client',
+            expand: true
+          }
+        ]
+      },
+      serverSrc: {
+        files: [
+          {
+            src: '<%= server.src_files %>',
+            cwd: 'server',
+            expand: true
+          }
+        ]
+      },
+      serverTest: {
+        files: [
+          {
+            src: '<%= server.test_files %>',
+            cwd: 'server',
             expand: true
           }
         ]
@@ -383,6 +402,19 @@ module.exports = function ( grunt ) {
     },
 
     /**
+     * This task runs server unit tests using nodeunit
+     */
+    nodeunit: {
+      files: [
+        {
+          src: [ '<%= server.test_files %>' ],
+          cwd: 'server',
+          expand: true
+        }
+      ]
+    },
+
+    /**
      * This task compiles the karma template so that changes to its file array
      * don't have to be managed manually.
      */
@@ -439,18 +471,18 @@ module.exports = function ( grunt ) {
        * When our JavaScript source files change, we want to run lint them and
        * run our unit tests.
        */
-      jssrc: {
+      clientJsSrc: {
         files: [ 
           'client/<%= client.app_files.js %>'
         ],
-        tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs' ]
+        tasks: [ 'jshint:clientSrc', 'karma:unit:run', 'copy:build_appjs' ]
       },
 
       /**
        * When assets are changed, copy them. Note that this will *not* copy new
        * files, so this is probably not very useful.
        */
-      assets: {
+      clientAssets: {
         files: [ 
           'client/src/assets/**/*'
         ],
@@ -460,7 +492,7 @@ module.exports = function ( grunt ) {
       /**
        * When index.html changes, we need to compile it.
        */
-      html: {
+      clientHtml: {
         files: [ 'client/<%= client.app_files.html %>' ],
         tasks: [ 'index:build' ]
       },
@@ -468,7 +500,7 @@ module.exports = function ( grunt ) {
       /**
        * When our templates change, we only rewrite the template cache.
        */
-      tpls: {
+      clientTpls: {
         files: [ 
           '<%= client.app_files.atpl %>', 
           '<%= client.app_files.ctpl %>'
@@ -479,7 +511,7 @@ module.exports = function ( grunt ) {
       /**
        * When the CSS files change, we need to compile and minify them.
        */
-      less: {
+      clientLess: {
         files: [ 'src/**/*.less' ],
         tasks: [ 'less:build' ]
       },
@@ -488,11 +520,38 @@ module.exports = function ( grunt ) {
        * When a JavaScript unit test file changes, we only want to lint it and
        * run the unit tests. We don't want to do any live reloading.
        */
-      jsunit: {
+      clientJsunit: {
         files: [
           '<%= client.app_files.jsunit %>'
         ],
-        tasks: [ 'jshint:test', 'karma:unit:run' ],
+        tasks: [ 'jshint:clientTest', 'karma:unit:run' ],
+        options: {
+          livereload: false
+        }
+      },
+
+      /**
+       * When a server src file changes, lint it. Do not do any live reloading.
+       */
+      serverSrc: {
+        files: [
+          '<%= server.src_files %>'
+        ],
+        tasks: [ 'jshint:serverSrc' ],
+        options: {
+          livereload: false
+        }
+      },
+
+      /**
+       * When a server unti test file changes, lint it and run unit tests.
+       * Do not do any live reloading.
+       */
+      serverTest: {
+        files: [
+          '<%= server.src_files %>'
+        ],
+        tasks: [ 'jshint:serverTest', 'nodeunit' ],
         options: {
           livereload: false
         }

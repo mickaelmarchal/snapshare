@@ -26,6 +26,11 @@
                 id: 3,
                 title: 'Album 3',
                 date: '2014-02-18'
+            },
+            {
+                id: 4,
+                title: 'Album 4gfhhgfh',
+                date: '2014-02-18'
             }
 
         ];
