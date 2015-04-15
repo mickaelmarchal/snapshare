@@ -7,9 +7,8 @@ module.exports = {
    * development and the `compile_dir` folder is where our app resides once it's
    * completely built.
    */
-  build_dir: 'build',
-  compile_dir: 'bin',
-
+  buildDir: 'build',
+  compileDir: 'bin',
 
   /**
    * Client build configuration
@@ -25,24 +24,22 @@ module.exports = {
      * main HTML file, `less` is our main stylesheet, and `unit` contains our
      * app's unit tests.
      */
-    app_files: {
-      js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
-      jsunit: [ 'src/**/*.spec.js' ],
+    appFiles: {
+      js: ['src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js'],
+      jsunit: ['src/**/*.spec.js'],
 
-      atpl: [ 'src/app/**/*.tpl.html' ],
-      ctpl: [ 'src/common/**/*.tpl.html' ],
+      atpl: ['src/app/**/*.tpl.html'],
+      ctpl: ['src/common/**/*.tpl.html'],
 
-      html: [ 'src/index.html' ],
+      html: ['src/index.html'],
       less: 'src/less/main.less'
     },
 
     /**
      * This is a collection of files used during testing only.
      */
-    test_files: {
-      js: [
-        'vendor/angular-mocks/angular-mocks.js'
-      ]
+    testFiles: {
+      js: ['vendor/angular-mocks/angular-mocks.js']
     },
 
     /**
@@ -63,7 +60,7 @@ module.exports = {
      * with our app's assets. This structure is flattened, so it is not
      * recommended that you use wildcards.
      */
-    vendor_files: {
+    vendorFiles: {
       js: [
         'vendor/angular/angular.js',
         'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
@@ -71,19 +68,17 @@ module.exports = {
         'vendor/angular-ui-router/release/angular-ui-router.js',
         'vendor/angular-ui-utils/modules/route/route.js'
       ],
-      css: [
-      ],
-      assets: [
-      ]
+      css: [],
+      assets: []
     }
   },
-  
+
   server: {
-    src_files: [
+    srcFiles: [
       'server.js',
       'lib/**/*.js'
     ],
-    test_files: [
+    testFiles: [
       'test/**/*.js'
     ]
   }
