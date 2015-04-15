@@ -518,7 +518,7 @@ module.exports = function(grunt) {
        */
       gruntfile: {
         files: 'Gruntfile.js',
-        tasks: ['jshint:gruntfile'],
+        tasks: ['jshint:gruntfile', 'jscs:gruntfile'],
         options: {
           livereload: false
         }
@@ -529,10 +529,11 @@ module.exports = function(grunt) {
        * run our unit tests.
        */
       clientJsSrc: {
-        files: [
-          'client/<%= client.appFiles.js %>'
-        ],
-        tasks: ['jshint:clientSrc', 'karma:unit:run', 'copy:buildAppJs']
+        files: ['<%= client.appFiles.js %>'],
+        tasks: ['jshint:clientSrc', 'jscs:clientSrc', 'karma:unit:run', 'copy:buildAppJs'],
+        options: {
+          cwd: 'client'
+        }
       },
 
       /**
@@ -550,26 +551,29 @@ module.exports = function(grunt) {
        * When index.html changes, we need to compile it.
        */
       clientHtml: {
-        files: ['client/<%= client.appFiles.html %>'],
-        tasks: ['index:build']
+        files: ['<%= client.appFiles.html %>'],
+        tasks: ['index:build'],
+        options: {
+          cwd: 'client'
+        }
       },
 
       /**
        * When our templates change, we only rewrite the template cache.
        */
       clientTpls: {
-        files: [
-          '<%= client.appFiles.atpl %>',
-          '<%= client.appFiles.ctpl %>'
-        ],
-        tasks: ['html2js']
+        files: ['<%= client.appFiles.atpl %>', '<%= client.appFiles.ctpl %>'],
+        tasks: ['html2js'],
+        options: {
+          cwd: 'client'
+        }
       },
 
       /**
        * When the CSS files change, we need to compile and minify them.
        */
       clientLess: {
-        files: ['src/**/*.less'],
+        files: ['client/src/**/*.less'],
         tasks: ['less:build']
       },
 
@@ -578,11 +582,10 @@ module.exports = function(grunt) {
        * run the unit tests. We don't want to do any live reloading.
        */
       clientJsunit: {
-        files: [
-          '<%= client.appFiles.jsunit %>'
-        ],
-        tasks: ['jshint:clientTest', 'karma:unit:run'],
+        files: ['<%= client.appFiles.jsunit %>'],
+        tasks: ['jshint:clientTest', 'jscs:clientTest', 'karma:unit:run'],
         options: {
+          cwd: 'client',
           livereload: false
         }
       },
@@ -591,11 +594,10 @@ module.exports = function(grunt) {
        * When a server src file changes, lint it. Do not do any live reloading.
        */
       serverSrc: {
-        files: [
-          '<%= server.srcFiles %>'
-        ],
-        tasks: ['jshint:serverSrc'],
+        files: ['<%= server.srcFiles %>'],
+        tasks: ['jshint:serverSrc', 'jscs:serverSrc'],
         options: {
+          cwd: 'server',
           livereload: false
         }
       },
@@ -605,11 +607,10 @@ module.exports = function(grunt) {
        * Do not do any live reloading.
        */
       serverTest: {
-        files: [
-          '<%= server.srcFiles %>'
-        ],
-        tasks: ['jshint:serverTest', 'nodeunit'],
+        files: ['<%= server.srcFiles %>'],
+        tasks: ['jshint:serverTest', 'jscs:serverTest', 'nodeunit'],
         options: {
+          cwd: 'server',
           livereload: false
         }
       }
@@ -737,9 +738,7 @@ module.exports = function(grunt) {
     files.push('<%= html2js.common.dest %>');
     files.push('client/module.suffix');
 
-    //console.log(files, 'FILES');
     grunt.config('concat.compileJs.src', files);
-
     grunt.task.run('concat:compileJs');
   });
 
