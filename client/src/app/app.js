@@ -33,6 +33,7 @@
       if (angular.isDefined(toState.data.pageTitle)) {
         $scope.pageTitle = toState.data.pageTitle + ' | snapShare' ;
       }
+
     });
   }
 
