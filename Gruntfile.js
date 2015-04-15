@@ -296,7 +296,8 @@ module.exports = function(grunt) {
         ]
       },
       gruntfile: [
-        'Gruntfile.js'
+        'Gruntfile.js',
+        'build.config.js'
       ],
       options: {
         curly: true,
@@ -312,12 +313,53 @@ module.exports = function(grunt) {
 
     /**
      * Use JSCS to check code style, using config in jscs.json
+     * For this project, we use airbnb coding style, see
+     * https://github.com/jscs-dev/node-jscs/blob/master/presets/airbnb.json
      */
     jscs: {
+      clientSrc: {
+        files: [
+          {
+            src: '<%= client.appFiles.js %>',
+            cwd: 'client',
+            expand: true
+          }
+        ]
+      },
+      clientTest: {
+        files: [
+          {
+            src: '<%= client.appFiles.jsunit %>',
+            cwd: 'client',
+            expand: true
+          }
+        ]
+      },
+      serverSrc: {
+        files: [
+          {
+            src: '<%= server.srcFiles %>',
+            cwd: 'server',
+            expand: true
+          }
+        ]
+      },
+      serverTest: {
+        files: [
+          {
+            src: '<%= server.testFiles %>',
+            cwd: 'server',
+            expand: true
+          }
+        ]
+      },
+      gruntfile: [
+        'Gruntfile.js',
+        'build.config.js'
+      ],
       options: {
         config: 'jscs.json'
-      },
-      gruntfile: ['Gruntfile.js', 'build.config.js']
+      }
     },
 
     /**
@@ -595,7 +637,7 @@ module.exports = function(grunt) {
    * The `build` task gets your app ready to run for development and testing.
    */
   grunt.registerTask('build', [
-    'clean', 'html2js', 'jshint', 'jscs:gruntfile', 'less:build',
+    'clean', 'html2js', 'jshint', 'jscs', 'less:build',
     'concat:buildCss', 'copy:buildAppAssets', 'copy:buildVendorAssets',
     'copy:buildAppJs', 'copy:buildVendorJs', 'copy:buildVendorCss', 'index:build', 'karmaconfig',
     'nodeunit:all', 'karma:continuous'

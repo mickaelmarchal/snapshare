@@ -8,6 +8,7 @@ exports.addRoutes = function(app, config) {
   app.use(config.server.staticUrl, express.compress());
   app.use(config.server.staticUrl, express.static(config.server.distFolder));
   app.use(config.server.staticUrl, function(req, res, next) {
-    res.send(404); // If we get here then the request for a static file is invalid
+    // If we get here then the request for a static file is invalid
+    res.send(404);
   });
 };

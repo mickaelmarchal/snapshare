@@ -1,4 +1,4 @@
-exports.addRoutes = function (app, config) {
+exports.addRoutes = function(app, config) {
   // users
   // projects
 };

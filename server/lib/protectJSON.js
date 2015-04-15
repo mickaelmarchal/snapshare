@@ -4,20 +4,23 @@ module.exports = function(req, res, next) {
   var _send = res.send;
   res.send = function(body) {
     var contentType = res.getHeader('Content-Type');
-    if ( contentType && contentType.indexOf('application/json') !== -1 ) {
-      if (2 === arguments.length) {
+    if (contentType && contentType.indexOf('application/json') !== -1) {
+      if (arguments.length === 2) {
         // res.send(body, status) backwards compat
-        if ('number' !== typeof body && 'number' === typeof arguments[1]) {
+        if (typeof body !== 'number' && typeof arguments[1] === 'number') {
           this.statusCode = arguments[1];
         } else {
           this.statusCode = body;
           body = arguments[1];
         }
       }
-      body = ")]}',\n" + body;
+
+      body = ')]}\',\n' + body;
       return _send.call(res, body);
     }
+
     _send.apply(res, arguments);
   };
+
   next();
 };

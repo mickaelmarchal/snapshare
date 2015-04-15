@@ -28,7 +28,7 @@ mongoProxyFactory.__set__('https', {
 });
 
 // Create a proxy to test
-proxy = mongoProxyFactory('https://api.mongolab.com/api/1/databases','4fb51e55e4b02e56a67b0b66');
+proxy = mongoProxyFactory('https://api.mongolab.com/api/1/databases', '4fb51e55e4b02e56a67b0b66');
 
 module.exports = {
   factory: {
@@ -38,7 +38,7 @@ module.exports = {
     }
   },
 
-  mapUrl : {
+  mapUrl: {
     testDatabasesUrl: function(test) {
       testMapUrl(test,
         '/',
@@ -62,6 +62,7 @@ module.exports = {
         '/ascrum/collections/users/SOME_ID',
         'https://api.mongolab.com/api/1/databases/ascrum/collections/users/SOME_ID?apiKey=4fb51e55e4b02e56a67b0b66');
     },
+
     testUrlMapWithLocalPath: function(test) {
       testMapUrl(test,
         '/ascrum/collections/users/SOME_ID',
@@ -80,22 +81,26 @@ module.exports = {
       test.equal(newRequest.method, 'HEAD');
       test.done();
     },
+
     testHostHeader: function(test) {
       var newRequest = proxy.mapRequest({url:'/', headers: {Host:'localhost:3000'}});
       test.equal(newRequest.headers.host, 'api.mongolab.com');
       test.done();
     },
+
     testHeaders: function(test) {
       var headers = { Accept:'text/html', 'Cache-Control':'max-age=0', Host:'localhost:3000', Connection:'keep-alive' };
       var newRequest = proxy.mapRequest({url:'/', headers: headers});
-      for(var key in newRequest.headers) {
-        if(key !== 'Host') { // Host gets modified, see testHostHeader
+      for (var key in newRequest.headers) {
+        if (key !== 'Host') { // Host gets modified, see testHostHeader
           test.equal(newRequest.headers[key], headers[key]);
         }
       }
+
       test.done();
     }
   },
+
   proxy: {
     checkHttpsRequestOptions: function(test) {
       var req = {
@@ -108,8 +113,13 @@ module.exports = {
       proxy(req, res);
       test.done();
     },
+
     nextShouldNotBeCalled: function(test) {
-      var req = { url: '', end: function() {} };
+      var req = {
+        url: '',
+        end: function() {}
+      };
+
       var res = { };
       var next = function() {
         throw new Error('Should not call next.');

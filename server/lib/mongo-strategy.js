@@ -16,7 +16,8 @@ function MongoDBStrategy(dbUrl, apiKey, dbName, collection) {
 
   // Serialize the user into a string (id) for storing in the session
   passport.serializeUser(function(user, done) {
-    done(null, user._id.$oid); // Remember that MongoDB has this weird { _id: { $oid: 1234567 } } structure
+    // Remember that MongoDB has this weird { _id: { $oid: 1234567 } } structure
+    done(null, user._id.$oid);
   });
 
   // Deserialize the user from a string (id) into a user (via a cll to the DB)
@@ -29,11 +30,13 @@ function MongoDBStrategy(dbUrl, apiKey, dbName, collection) {
 // MongoDBStrategy inherits from LocalStrategy
 util.inherits(MongoDBStrategy, LocalStrategy);
 
-MongoDBStrategy.name = "mongo";
+MongoDBStrategy.name = 'mongo';
 
 // Query the users collection
 MongoDBStrategy.prototype.query = function(query, done) {
-  query.apiKey = this.apiKey;     // Add the apiKey to the passed in query
+
+  // Add the apiKey to the passed in query
+  query.apiKey = this.apiKey;
   var request = rest.get(this.baseUrl, { qs: query, json: {} }, function(err, response, body) {
     done(err, body);
   });
@@ -50,9 +53,10 @@ MongoDBStrategy.prototype.get = function(id, done) {
 // Find a user by their email
 MongoDBStrategy.prototype.findByEmail = function(email, done) {
   this.query({ q: JSON.stringify({email: email}) }, function(err, result) {
-    if ( result && result.length === 1 ) {
+    if (result && result.length === 1) {
       return done(err, result[0]);
     }
+
     done(err, null);
   });
 };
@@ -65,6 +69,7 @@ MongoDBStrategy.prototype.verifyUser = function(email, password, done) {
         user = null;
       }
     }
+
     done(err, user);
   });
 };

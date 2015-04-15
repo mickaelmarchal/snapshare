@@ -10,7 +10,7 @@ var config = {
 
 function mockUpUser(isAdmin) {
   return {
-    _id : { $oid: '1234567' },
+    _id: { $oid: '1234567' },
     email: 'email',
     password: 'password',
     firstName: 'firstName',
@@ -25,6 +25,7 @@ function mockUpPassport(test, authenticated) {
     use: function(fn) {
       spies.useCalled = true;
     },
+
     authenticate: function(strategy, callback) {
       spies.authenticateCalled = true;
       return function() { callback(); };
@@ -40,6 +41,7 @@ function mockUpMongoStrategy(test) {
     test.equal(dbName, config.dbName);
     test.equal(usersCollection, config.usersCollection);
   };
+
   strategy.name = 'mongo';
   security.__set__('MongoStrategy', strategy);
 }
@@ -64,12 +66,18 @@ module.exports = {
     var next = function() { nextCalled = true; };
 
     // Test when user is unauthenticated
-    req.isAuthenticated = function() { return false; };
+    req.isAuthenticated = function() {
+      return false;
+    };
+
     security.authenticationRequired(req, res, next);
     test.ok(jsonCalled);
 
     // Test when user is authenticated
-    req.isAuthenticated = function() { return true; };
+    req.isAuthenticated = function() {
+      return true;
+    };
+
     security.authenticationRequired(req, res, next);
     test.ok(nextCalled);
 
@@ -111,13 +119,14 @@ module.exports = {
 
   sendCurrentUser: function(test) {
     var jsonCalled = false;
-    var req = { user : mockUpUser(false) };
+    var req = { user: mockUpUser(false) };
     var res = {
       json: function(status, userInfo) {
         test.equal(status, 200);
         test.equal(userInfo.user.id, req.user._id.$oid);
         jsonCalled = true;
       },
+
       end: function() {}
     };
     security.sendCurrentUser(req, res, null);
@@ -130,11 +139,15 @@ module.exports = {
 
     var jsonCalled = false;
     var res = {
-      json: function() { jsonCalled = true; }
+      json: function() {
+        jsonCalled = true;
+      }
     };
 
     var nextCalled = false;
-    var next = function() { nextCalled = true; };
+    var next = function() {
+      nextCalled = true;
+    };
 
     var spies = mockUpPassport(test);
     security.login(req, res, next);
@@ -157,10 +170,12 @@ module.exports = {
       redirect: function() {
         redirectCalled = true;
       },
+
       send: function() {
         sendCalled = true;
       }
     };
+
     // Test without POST
     security.logout(req, res);
     test.ok(logoutCalled);

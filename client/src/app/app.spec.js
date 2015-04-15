@@ -1,18 +1,20 @@
 describe('AppController', function() {
-    
-    describe('isCurrentUrl',function() {
-        var AppController, $location, $scope;
 
-        beforeEach(module('app'));
+  describe('isCurrentUrl', function() {
+    var AppController;
+    var $location;
+    var $scope;
 
-        beforeEach(inject(function($controller, _$location_, $rootScope) {
-            $location = _$location_;
-            $scope = $rootScope.$new();
-            AppController = $controller( 'AppController', { $location: $location, $scope: $scope });
-        }));
+    beforeEach(module('app'));
 
-        it( 'should pass a dummy test', inject( function() {
-            expect( AppController ).toBeTruthy();
-        }));
-    });
+    beforeEach(inject(function($controller, _$location_, $rootScope) {
+      $location = _$location_;
+      $scope = $rootScope.$new();
+      AppController = $controller('AppController', {$location: $location, $scope: $scope});
+    }));
+
+    it('should pass a dummy test', inject(function() {
+      expect(AppController).toBeTruthy();
+    }));
+  });
 });

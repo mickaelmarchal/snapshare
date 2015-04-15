@@ -1,37 +1,37 @@
 (function() {
-    'use strict';
-    
-    angular
-        .module('app.home', [
-            'ui.router'
-        ])
-        .config(configure)
-        .controller('HomeController', HomeController);
+  'use strict';
 
-    configure.$inject = ['$stateProvider'];
-    HomeController.$inject = [];
+  angular
+    .module('app.home', [
+      'ui.router'
+    ])
+    .config(configure)
+    .controller('HomeController', HomeController);
 
-	/**
-	 * Routes for home module
-	 */
-    function configure($stateProvider) {
-        $stateProvider.state( 'home', {
-            url: '/home',
-            views: {
-                "main": {
-                    controller: 'HomeController',
-                    templateUrl: 'home/home.tpl.html'
-                }
-            },
-            data: {pageTitle: 'Home'}
-        });
-    }
+  configure.$inject = ['$stateProvider'];
+  HomeController.$inject = [];
 
-    /**
-     * Homepage controller 
-     */
-    function HomeController() {
-        this.toto = 'aaaaa';
-    }
+  /**
+   * Routes for home module
+   */
+  function configure($stateProvider) {
+    $stateProvider.state('home', {
+      url: '/home',
+      views: {
+        main: {
+          controller: 'HomeController',
+          templateUrl: 'home/home.tpl.html'
+        }
+      },
+      data: {pageTitle: 'Home'}
+    });
+  }
+
+  /**
+   * Homepage controller
+   */
+  function HomeController() {
+    this.toto = 'aaaaa';
+  }
 
 })();
