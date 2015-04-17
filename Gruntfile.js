@@ -164,6 +164,26 @@ module.exports = function(grunt) {
             expand: true
           }
         ]
+      },
+      buildServer: {
+        files: [
+          {
+            src: ['<%= server.srcFiles %>'],
+            dest: '<%= buildDir %>/server',
+            cwd: 'server',
+            expand: true
+          }
+        ]
+      },
+      compileServer: {
+        files: [
+          {
+            src: ['<%= server.srcFiles %>'],
+            dest: '<%= compileDir %>/server',
+            cwd: '<%= buildDir %>/server',
+            expand: true
+          }
+        ]
       }
     },
 
@@ -640,8 +660,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'clean', 'html2js', 'jshint', 'jscs', 'less:build',
     'concat:buildCss', 'copy:buildAppAssets', 'copy:buildVendorAssets',
-    'copy:buildAppJs', 'copy:buildVendorJs', 'copy:buildVendorCss', 'index:build', 'karmaconfig',
-    'nodeunit:all', 'karma:continuous'
+    'copy:buildAppJs', 'copy:buildVendorJs', 'copy:buildVendorCss', 'index:build',
+    'copy:buildServer', 'nodeunit:all', 'karmaconfig', 'karma:continuous'
   ]);
 
   /**
@@ -649,7 +669,8 @@ module.exports = function(grunt) {
    * minifying your code.
    */
   grunt.registerTask('compile', [
-    'less:compile', 'copy:compileAssets', 'ngAnnotate', 'compilejs', 'uglify', 'index:compile'
+    'less:compile', 'copy:compileAssets', 'ngAnnotate', 'compilejs',
+    'uglify', 'index:compile', 'copy:compileServer'
   ]);
 
   /**
