@@ -170,7 +170,7 @@ module.exports = function(grunt) {
       buildServer: {
         files: [
           {
-            src: ['<%= server.srcFiles %>'],
+            src: ['<%= server.srcFiles %>', '<%= server.assetFiles %>'],
             dest: '<%= buildDir %>/server',
             cwd: 'server',
             expand: true
@@ -180,7 +180,7 @@ module.exports = function(grunt) {
       compileServer: {
         files: [
           {
-            src: ['<%= server.srcFiles %>'],
+            src: ['<%= server.srcFiles %>', '<%= server.assetFiles %>'],
             dest: '<%= compileDir %>/server',
             cwd: '<%= buildDir %>/server',
             expand: true
