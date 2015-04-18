@@ -12,6 +12,10 @@ var passport = require('passport');
 var security = require('./lib/security');
 var xsrf = require('./lib/xsrf');
 var protectJSON = require('./lib/protectJSON');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session');
+var errorHandler = require('errorhandler');
 require('express-namespace');
 
 var app = express();
@@ -23,16 +27,18 @@ require('./lib/routes/static').addRoutes(app, config);
 app.use(protectJSON);
 
 // Log requests to the console
-app.use(express.logger());
+//app.use(express.logger());
 
 // Extract the data from the body of the request - this is needed by the LocalStrategy authenticate method
-app.use(express.bodyParser());
+app.use(bodyParser());
 
 // Hash cookies with this secret
-app.use(express.cookieParser(config.server.cookieSecret));
+app.use(cookieParser(config.server.cookieSecret));
 
 // Store the session in the (secret) cookie
-app.use(express.cookieSession());
+app.use(cookieSession({
+  keys: ['key1', 'key2']
+}));
 
 // Initialize PassportJS
 app.use(passport.initialize());
@@ -84,7 +90,7 @@ require('./lib/routes/security').addRoutes(app, security);
 require('./lib/routes/appFile').addRoutes(app, config);
 
 // A standard error handler - it picks up any left over errors and returns a nicely formatted server 500 error
-app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
+app.use(errorHandler({dumpExceptions: true, showStack: true}));
 
 // Start up the server on the port specified in the config
 server.listen(config.server.listenPort, '0.0.0.0', 511, function() {
