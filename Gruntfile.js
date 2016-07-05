@@ -18,8 +18,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-jscs');
-  grunt.loadNpmTasks('grunt-concurrent');
-  grunt.loadNpmTasks('grunt-nodemon');
 
   /**
    * Load in our build configuration file.
@@ -163,26 +161,6 @@ module.exports = function(grunt) {
             src: ['<%= client.vendorFiles.css %>'],
             dest: '<%= compileDir %>/client',
             cwd: 'client',
-            expand: true
-          }
-        ]
-      },
-      buildServer: {
-        files: [
-          {
-            src: ['<%= server.srcFiles %>', '<%= server.assetFiles %>'],
-            dest: '<%= buildDir %>/server',
-            cwd: 'server',
-            expand: true
-          }
-        ]
-      },
-      compileServer: {
-        files: [
-          {
-            src: ['<%= server.srcFiles %>', '<%= server.assetFiles %>'],
-            dest: '<%= compileDir %>/server',
-            cwd: '<%= buildDir %>/server',
             expand: true
           }
         ]
@@ -617,7 +595,7 @@ module.exports = function(grunt) {
        */
       serverSrc: {
         files: ['<%= server.srcFiles %>'],
-        tasks: ['jshint:serverSrc', 'jscs:serverSrc', 'copy:buildServer'],
+        tasks: ['jshint:serverSrc', 'jscs:serverSrc'],
         options: {
           cwd: 'server',
           livereload: false
@@ -625,69 +603,15 @@ module.exports = function(grunt) {
       },
 
       /**
-       * When a server unit test file changes, lint it and run unit tests.
+       * When a server unti test file changes, lint it and run unit tests.
        * Do not do any live reloading.
        */
       serverTest: {
-        files: ['<%= server.testFiles %>'],
+        files: ['<%= server.srcFiles %>'],
         tasks: ['jshint:serverTest', 'jscs:serverTest', 'nodeunit'],
         options: {
           cwd: 'server',
           livereload: false
-        }
-      }
-    },
-
-    /**
-     * Each time a file on the server is modified (which is the case when watch detects a change),
-     * then reload the server.
-     * Whan the server starts up, open a browser tab
-     */
-    nodemon: {
-      dev: {
-        script: 'build/server/server.js',
-        options: {
-          nodeArgs: ['--debug'],
-          watch: ['build/server']
-          /*env: {
-            PORT: '5455'
-          },*/
-
-          // omit this property if you aren't serving HTML files and
-          // don't want to open a browser tab on start
-          /*callback: function (nodemon) {
-            nodemon.on('log', function (event) {
-              console.log(event.colour);
-            });
-
-            // opens browser on initial server start
-            nodemon.on('config:update', function () {
-              // Delay before server listens on port
-              setTimeout(function() {
-                require('open')('http://localhost:5455');
-              }, 1000);
-            });
-
-            // refreshes browser when server reboots
-            nodemon.on('restart', function () {
-              // Delay before server listens on port
-              setTimeout(function() {
-                require('fs').writeFileSync('.rebooted', 'rebooted');
-              }, 1000);
-            });
-          }*/
-        }
-      }
-    },
-
-    /**
-     * Run nodemon (watch changes on server) and delta (watch changes on client) concurrently
-     */
-    concurrent: {
-      dev: {
-        tasks: ['nodemon', 'delta'],
-        options: {
-          logConcurrentOutput: true
         }
       }
     }
@@ -703,7 +627,7 @@ module.exports = function(grunt) {
    * before watching for changes.
    */
   grunt.renameTask('watch', 'delta');
-  grunt.registerTask('watch', ['build', 'karma:unit', 'concurrent']);
+  grunt.registerTask('watch', ['build', 'karma:unit', 'delta']);
 
   /**
    * The default task is to build and compile.
@@ -716,8 +640,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'clean', 'html2js', 'jshint', 'jscs', 'less:build',
     'concat:buildCss', 'copy:buildAppAssets', 'copy:buildVendorAssets',
-    'copy:buildAppJs', 'copy:buildVendorJs', 'copy:buildVendorCss', 'index:build',
-    'copy:buildServer', 'nodeunit:all', 'karmaconfig', 'karma:continuous'
+    'copy:buildAppJs', 'copy:buildVendorJs', 'copy:buildVendorCss', 'index:build', 'karmaconfig',
+    'nodeunit:all', 'karma:continuous'
   ]);
 
   /**
@@ -725,8 +649,7 @@ module.exports = function(grunt) {
    * minifying your code.
    */
   grunt.registerTask('compile', [
-    'less:compile', 'copy:compileAssets', 'ngAnnotate', 'compilejs',
-    'uglify', 'index:compile', 'copy:compileServer'
+    'less:compile', 'copy:compileAssets', 'ngAnnotate', 'compilejs', 'uglify', 'index:compile'
   ]);
 
   /**

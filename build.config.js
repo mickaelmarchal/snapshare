@@ -75,11 +75,8 @@ module.exports = {
 
   server: {
     srcFiles: [
-      '*.js',
+      'server.js',
       'lib/**/*.js'
-    ],
-    assetFiles: [
-      'cert/*'
     ],
     testFiles: [
       'test/**/*.js'
